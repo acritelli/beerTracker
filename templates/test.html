@@ -1,0 +1,9 @@
+<body>
+    {% for brewery in breweries %}
+        <h1>{{ brewery['name'] }}</h1>
+        {% for beer in brewery.beers %}
+            <p>{{ beer }}</p>
+        {% endfor %}
+    {% endfor %}
+
+</body>
