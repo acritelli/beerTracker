@@ -28,7 +28,15 @@ def landingPage():
 @app.route('/signup', methods = ['POST'])
 def signup():
     # Check to see if this is a valid email address
-    
+
+    # Generate a UUID, verify not already in database
+
+    # Init the user object with all breweries (may want to consider an "edit" flag to show if they've had something or not)
+
+    # Send an email with the link
+
+    # Redirect user to their page (template should recommend they bookmark)
+
     # Check to see if a valid UUID was submitted, check if exists
     print(request.form)
     return(uuid())
