@@ -66,14 +66,30 @@ def user(url):
     # Display template
     return render_template('userPage.html', url=url)
 
+# TODO: alphabetical order
 @app.route('/users/<url>/getBeers')
 def getBeers(url):
     # Grab all beer info from user entry based on UUID.
     user = mongo.db.users.find_one(({'url': url}))
     return dumps(user)
 
-@app.route('/editRating')
-def editRating():
+@app.route('/users/<url>/editRating', methods = ['POST'])
+def editRating(url):
+
+    # Check to see if beer exists
+    # TODO: more efficient query and update, return more robust errors...
+    user = mongo.db.users.find_one({'url': url})
+    if(user['beer'][request.form['brewery']][request.form['beer']]):
+        # Update rating and notes
+        user['beer'][request.form['brewery']][request.form['beer']]['rating'] = request.form['rating']
+        user['beer'][request.form['brewery']][request.form['beer']]['notes'] = request.form['tastingNotes']
+        mongo.db.users.update({'url' : url}, user)
+        
+    else:
+        return('error')
+
+    # print(request.form['brewery'], request.form['beer'], request.form['rating'], request.form['tastingNotes'])
+
     return('you got here')
 
 @app.route('/beers')

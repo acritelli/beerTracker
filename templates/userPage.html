@@ -66,6 +66,11 @@
                 buildBeerSelector($(this).val())
             })
 
+            // Add change listener to beer object so that we can display existing rating, if applicable
+            $('#beerSelector').on('change', function() {
+                displayBeerRating($('#brewerySelector').val(), $(this).val())
+            })
+
             $('button').on('click', editRating)
 
             // Emptys the list of beers and refreshes based on the brewery selected
@@ -74,11 +79,40 @@
                 for (beer in result.beer[brewery]){
                     $('#beerSelector').append('<option>' + beer + '</option>')
                 }
+                // Display rating or tasting notes
+                displayBeerRating($('#brewerySelector').val(), $('#beerSelector').val())
+
             }
 
             function editRating(){
-                console.log('hello')
+                var postStr = '/users/' + url + '/editRating'
+                var brewery = $('#brewerySelector').val()
+                var beer = $('#beerSelector').val()
+                var rating = $('#rating').val()
+                var tastingNotes = $('#tastingNotes').val()
+                var data = {
+                    'brewery': brewery,
+                    'beer': beer,
+                    'rating': rating,
+                    'tastingNotes': tastingNotes
+                }
+                // Update original response that we got
+                result.beer[brewery][beer]['rating'] = rating
+                result.beer[brewery][beer]['notes'] = tastingNotes
+                $.post(postStr, data)
             }
+
+            function displayBeerRating (brewery, beer) {
+                // Default to rating of 1
+                if(result.beer[brewery][beer]['rating'] !== ''){
+                    $('#rating').val(result.beer[brewery][beer]['rating'])
+                } else {
+                    $('#rating').val(1)
+                }
+                
+                $('#tastingNotes').val(result.beer[brewery][beer]['notes'])
+            }
+
 
         </script>
 
