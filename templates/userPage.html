@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <!-- Bootstrap - Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!--jQuery -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <title>2017 Expo Signup</title>
+    </head>
+
+    <body>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>Beer Tracker</h1>
+                    <p>This site provides a way to track your beer consumption and tasting notes at the 2017 Rochester Real Beer Expo. Sign-up is free. Simply enter your email and name, and you will receive a unique URL for your beer consumption tracking. <em>DO NOT LOOSE THIS EMAIL OR URL.</em> This is the only way to access your "account."</p>
+                    <p>This service <em>is not affiliated</em> with the Real Beer Expo.</p>
+
+                    <form>
+                        <label for="brewerySelector">Brewery</label>
+                        <select class="form-control" id="brewerySelector" name="brewerySelector">
+                        </select>
+                        <label for="beerSelector">Beer</label>
+                        <select class="form-control" id="beerSelector" name="beerSelector">
+                        </select>
+                        <label for="rating">Rating (out of 5)</label>
+                        <select class="form-control" id="rating" name="rating">
+                            <option>1</option>
+                            <option>1.5</option>
+                            <option>2</option>
+                            <option>2.5</option>
+                            <option>3</option>
+                            <option>3.5</option>
+                            <option>4</option>
+                            <option>4.5</option>
+                            <option>5</option>
+                        </select>
+                        <label for="tastingNotes">Tasting Notes</label>
+                        <textarea class="form-control" placeholder="Tasting notes" name="tastingNotes" id="tastingNotes"></textarea>
+                    </form>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var url = "{{ url }}"
+            var getString = '/users/' + url + '/getBeers'
+
+            // Asynch get JSON of beers (I know, this is bad, but I need the object later and don't feel like being in callback hell)
+            var result
+            $.getJSON({'url': getString, 'async': false}, function(r){
+                result = r
+            })
+
+            // Build the brewery selectors
+            for (brewery in result.beer) {
+                $('#brewerySelector').append('<option>' + brewery + '</option>')
+            }
+
+            // Build beer list based on currently selected brewery
+            buildBeerSelector($('#brewerySelector').val())
+
+            // Add change listeners to the brewery objects so that the beer list is rebuilt when the brewery changes.
+            $('#brewerySelector').on('change', function(){
+                buildBeerSelector($(this).val())
+            })
+
+            $('button').on('click', editRating)
+
+            // Emptys the list of beers and refreshes based on the brewery selected
+            function buildBeerSelector(brewery) {
+                $('#beerSelector').empty()
+                for (beer in result.beer[brewery]){
+                    $('#beerSelector').append('<option>' + beer + '</option>')
+                }
+            }
+
+            function editRating(){
+                console.log('hello')
+            }
+
+        </script>
+
+    </body>
+
+</html>

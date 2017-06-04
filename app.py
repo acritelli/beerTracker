@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 from shortuuid import uuid
 from flask_pymongo import PyMongo
 from flask_mail import Mail, Message
+from bson.json_util import dumps
 
 # client = MongoClient()
 
@@ -38,6 +39,7 @@ def signup():
         return('Error')
 
     # Init the user object with all breweries (may want to consider an "edit" flag to show if they've had something or not)
+    # TODO: handling for periods in beer name?
     newUser = {
         'url': url,
         'name': request.form['name'],
@@ -59,19 +61,26 @@ def signup():
     redirectStr = '/users/' + url
     return redirect(redirectStr)
 
-@app.route('/users/<uuid>')
-def user(uuid):
-    str = "Your uuid is " + uuid
-    return(str)
-    
+@app.route('/users/<url>')
+def user(url):
+    # Display template
+    return render_template('userPage.html', url=url)
+
+@app.route('/users/<url>/getBeers')
+def getBeers(url):
+    # Grab all beer info from user entry based on UUID.
+    user = mongo.db.users.find_one(({'url': url}))
+    return dumps(user)
+
+@app.route('/editRating')
+def editRating():
+    return('you got here')
 
 @app.route('/beers')
 def hello():
     default_breweries = list(mongo.db.defBeers.find())
     return render_template('test.html', breweries=default_breweries)
 
-# User page
-# Grab all defualt beer info from Mongo. Grab beer info from user collection. foreach, If beer is in user collection, display that info. Else, display defaults.
 
 # Edit rating
 # Accept JSON of beer info. Get Mongo for user. If the entry exists, update it. If not, add it.
