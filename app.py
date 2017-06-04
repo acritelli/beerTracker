@@ -1,8 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from pymongo import MongoClient
 from secrets import randbits
 from shortuuid import uuid
-# from flask_pymongo import PyMongo
+from flask_pymongo import PyMongo
 
 # client = MongoClient()
 
@@ -16,6 +16,8 @@ from shortuuid import uuid
         
 
 app = Flask(__name__)
+app.config['MONGO_DBNAME'] = 'beerexpo'
+mongo = PyMongo(app)
 
 # Sign up page
 # Accept an email, generate a random URL, store user info in Mongo, send an email with the URL
@@ -23,9 +25,12 @@ app = Flask(__name__)
 def landingPage():
     return render_template('signup.html')
 
-@app.route('/signup')
+@app.route('/signup', methods = ['POST'])
 def signup():
+    # Check to see if this is a valid email address
+    
     # Check to see if a valid UUID was submitted, check if exists
+    print(request.form)
     return(uuid())
 
 @app.route('/users/<uuid>')
@@ -34,11 +39,9 @@ def user(uuid):
     return(str)
     
 
-
+@app.route('/beers')
 def hello():
-    client = MongoClient()
-    db = client.beerexpo
-    default_breweries = list(db.defBeers.find())
+    default_breweries = list(mongo.db.defBeers.find())
     return render_template('test.html', breweries=default_breweries)
 
 # User page
