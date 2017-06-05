@@ -1,13 +1,41 @@
 <html>
     <head>
-        <!-- Bootstrap - Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <!--jQuery -->
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <!-- Bootstrap - Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <!-- Bootstrap - Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <title>2017 Expo Signup</title>
+
+        <style type="text/css">
+            #otherBrewery {
+                display: none;
+            }
+            #otherBeer {
+                display: none;
+            }
+        
+        </style>
     </head>
 
     <body>
+
+        <div class="modal fade" id="successModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1>Success!</h1>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success" role="alert"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
         <div class="container">
             <div class="row">
@@ -20,9 +48,11 @@
                         <label for="brewerySelector">Brewery</label>
                         <select class="form-control" id="brewerySelector" name="brewerySelector">
                         </select>
+                        <input type="text" class="form-control" id="otherBrewery" placeholder="Brewery Name">
                         <label for="beerSelector">Beer</label>
                         <select class="form-control" id="beerSelector" name="beerSelector">
                         </select>
+                        <input type="text" class="form-control" id="otherBeer" placeholder="Beer Name">
                         <label for="rating">Rating (out of 5)</label>
                         <select class="form-control" id="rating" name="rating">
                             <option>1</option>
@@ -38,7 +68,7 @@
                         <label for="tastingNotes">Tasting Notes</label>
                         <textarea class="form-control" placeholder="Tasting notes" name="tastingNotes" id="tastingNotes"></textarea>
                     </form>
-                    <button type="submit" class="btn btn-default">Submit</button>
+                    <button type="submit" class="btn btn-default" id="submitChanges">Submit</button>
                 </div>
             </div>
         </div>
@@ -57,6 +87,7 @@
             for (brewery in result.beer) {
                 $('#brewerySelector').append('<option>' + brewery + '</option>')
             }
+            $('#brewerySelector').append('<option>Other</option>')
 
             // Build beer list based on currently selected brewery
             buildBeerSelector($('#brewerySelector').val())
@@ -71,14 +102,29 @@
                 displayBeerRating($('#brewerySelector').val(), $(this).val())
             })
 
-            $('button').on('click', editRating)
+            $('#submitChanges').on('click', editRating)
 
             // Emptys the list of beers and refreshes based on the brewery selected
             function buildBeerSelector(brewery) {
+                // Build out brewery if other
+                if(brewery === 'Other'){
+                    $('#otherBrewery').val('')
+                    $('#otherBrewery').css('display', 'block')
+                    $('#beerSelector').empty()
+                    $('#beerSelector').append('<option>Other</option>')
+                    $('#otherBeer').css('display', 'block')
+                    displayBeerRating('Other', 'Other')
+                    return
+                } else {
+                    $('#otherBrewery').css('display', 'none')
+                    $('#otherBeer').css('display', 'none')
+                }
+
                 $('#beerSelector').empty()
                 for (beer in result.beer[brewery]){
                     $('#beerSelector').append('<option>' + beer + '</option>')
                 }
+                $('#beerSelector').append('<option>Other</option>')
                 // Display rating or tasting notes
                 displayBeerRating($('#brewerySelector').val(), $('#beerSelector').val())
 
@@ -86,8 +132,22 @@
 
             function editRating(){
                 var postStr = '/users/' + url + '/editRating'
-                var brewery = $('#brewerySelector').val()
-                var beer = $('#beerSelector').val()
+
+                // If brewery is other, then we need to get the name of the new brewery
+                if ($('#brewerySelector').val() === 'Other') {
+                    var brewery = $('#otherBrewery').val()
+                    $('#brewerySelector').append('<option>' + brewery + '</option>')
+                } else{
+                    var brewery = $('#brewerySelector').val()
+                }
+
+                // If beer is other, then we need to get the name of the new beer and update the beer list
+                if ($('#beerSelector').val() === 'Other') {
+                    var beer = $('#otherBeer').val()
+                    $('#beerSelector').append('<option>' + beer + '</option>')
+                    } else {
+                    var beer = $('#beerSelector').val()
+                }     
                 var rating = $('#rating').val()
                 var tastingNotes = $('#tastingNotes').val()
                 var data = {
@@ -96,13 +156,34 @@
                     'rating': rating,
                     'tastingNotes': tastingNotes
                 }
-                // Update original response that we got
+
+                // Update original response that we got (add if this was a different beer)
+                if ($('#brewerySelector').val() === 'Other') {
+                    result.beer[brewery] = {}
+                }
+                if ($('#beerSelector').val() === 'Other') {
+                    result.beer[brewery][beer] = {}
+                }
                 result.beer[brewery][beer]['rating'] = rating
                 result.beer[brewery][beer]['notes'] = tastingNotes
-                $.post(postStr, data)
+                $.post(postStr, data, function(r) {
+                    if(r === 'success') {
+                        $('#successModal .alert-success').text('Successfully updated ' + beer)
+                        $('#successModal').modal('toggle')
+                    }
+                    // TODO: actually handle errors
+                })
             }
 
             function displayBeerRating (brewery, beer) {
+                // Account for other beer
+                if (beer === 'Other') {
+                    $('#otherBeer').val('')
+                    $('#otherBeer').css('display', 'block')
+                    $('#rating').val(1)
+                    $('#tastingNotes').val('')
+                    return
+                }
                 // Default to rating of 1
                 if(result.beer[brewery][beer]['rating'] !== ''){
                     $('#rating').val(result.beer[brewery][beer]['rating'])

@@ -1,25 +1,13 @@
 from flask import Flask, render_template, request, redirect, jsonify
 from shortuuid import uuid
 from flask_pymongo import PyMongo
-from flask_mail import Mail, Message
 from bson.json_util import dumps
-
-# client = MongoClient()
-
-# db = client.beerexpo
-# collection = db.beers
-
-# for record in collection.find():
-#     print(record['name'])
-#     for beer in record['beers']:
-#         print("\t", beer)
         
 
 app = Flask(__name__)
 app.config['MONGO_DBNAME'] = 'beerexpo'
 app.config['MAIL_DEFAULT_SENDER'] = 'expotracker'
 mongo = PyMongo(app)
-mail = Mail(app)
 
 # Sign up page
 # Accept an email, generate a random URL, store user info in Mongo, send an email with the URL
@@ -78,19 +66,46 @@ def editRating(url):
 
     # Check to see if beer exists
     # TODO: more efficient query and update, return more robust errors...
+
+    # Remove . and $ characters from brewery and beer, since they're keys in Mongo
+    brewery = request.form['brewery']
+    brewery = brewery.replace('.', '')
+    brewery = brewery.replace('$', '')
+    beer = request.form['beer']
+    beer = beer.replace('.', '')
+    beer = beer.replace('$', '')
+
+    rating = request.form['rating']
+    notes = request.form['tastingNotes']
+
     user = mongo.db.users.find_one({'url': url})
-    if(user['beer'][request.form['brewery']][request.form['beer']]):
-        # Update rating and notes
-        user['beer'][request.form['brewery']][request.form['beer']]['rating'] = request.form['rating']
-        user['beer'][request.form['brewery']][request.form['beer']]['notes'] = request.form['tastingNotes']
-        mongo.db.users.update({'url' : url}, user)
+
+    # Account for new breweries/beers
+    if (not brewery in user['beer']):
+        user['beer'][brewery] = {}
+    if (not beer in user['beer'][brewery]):
+        user['beer'][brewery][beer] = {'rating':'', 'notes':''}
+
+    user['beer'][brewery][beer]['rating'] = rating
+    user['beer'][brewery][beer]['notes'] = notes
+
+
+    # user['beer'][request.form['brewery']][request.form['beer']]['rating'] = request.form['rating']
+    # user['beer'][request.form['brewery']][request.form['beer']]['notes'] = request.form['tastingNotes']
+    mongo.db.users.update({'url' : url}, user)
+    return('success')
+
+    # if(user['beer'][request.form['brewery']][request.form['beer']]):
+    #     # Update rating and notes
+    #     user['beer'][request.form['brewery']][request.form['beer']]['rating'] = request.form['rating']
+    #     user['beer'][request.form['brewery']][request.form['beer']]['notes'] = request.form['tastingNotes']
+    #     mongo.db.users.update({'url' : url}, user)
+    #     return('success')
         
-    else:
-        return('error')
+    # else:
+    #     return('error')
 
     # print(request.form['brewery'], request.form['beer'], request.form['rating'], request.form['tastingNotes'])
-
-    return('you got here')
 
 @app.route('/beers')
 def hello():
