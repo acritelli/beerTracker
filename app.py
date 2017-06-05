@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, make_response
 from shortuuid import uuid
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
+from csv import writer
+from io import StringIO
         
 
 app = Flask(__name__)
@@ -89,6 +91,24 @@ def editRating(url):
 
     mongo.db.users.update({'url' : url}, user)
     return('success')
+
+@app.route('/users/<url>/downloadRatings')
+def downloadRatings(url):
+    stringIO = StringIO()
+    csv = writer(stringIO)
+    csv.writerow(['Brewery', 'Beer', 'Rating', 'Notes'])
+    user = mongo.db.users.find_one({'url': url})
+    for brewery in user['beer']:
+        for beer in user['beer'][brewery]:
+            row = [brewery, beer, user['beer'][brewery][beer]['rating'], user['beer'][brewery][beer]['notes']]
+            csv.writerow(row)
+    output = make_response(stringIO.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=beerRatings.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+    
+    
 
 @app.route('/beers')
 def hello():

@@ -15,6 +15,9 @@
             #otherBeer {
                 display: none;
             }
+            .row {
+                margin-top: 10px;
+            }
         
         </style>
     </head>
@@ -41,8 +44,8 @@
             <div class="row">
                 <div class="col-sm-12">
                     <h1>Beer Tracker</h1>
-                    <p>This site provides a way to track your beer consumption and tasting notes at the 2017 Rochester Real Beer Expo. Sign-up is free. Simply enter your email and name, and you will receive a unique URL for your beer consumption tracking. <em>DO NOT LOOSE THIS EMAIL OR URL.</em> This is the only way to access your "account."</p>
-                    <p>This service <em>is not affiliated</em> with the Real Beer Expo.</p>
+                    <h2>BOOKMARK THIS PAGE!</h2>
+                    <p>This is your personal dashboard. Bookmark this page so that you can come back to it later. If you loose this URL, then you will need to create a new account.</p>
 
                     <form>
                         <label for="brewerySelector">Brewery</label>
@@ -68,7 +71,12 @@
                         <label for="tastingNotes">Tasting Notes</label>
                         <textarea class="form-control" placeholder="Tasting notes" name="tastingNotes" id="tastingNotes"></textarea>
                     </form>
-                    <button type="submit" class="btn btn-default" id="submitChanges">Submit</button>
+                    <button type="submit" class="btn btn-success" id="submitChanges">Submit</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="/users/{{ url }}/downloadRatings"><button type="submit" class="btn btn-info" id="downloadRatings">Download Ratings (.csv)</button></a>
                 </div>
             </div>
         </div>
