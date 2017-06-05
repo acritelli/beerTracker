@@ -63,8 +63,6 @@ def getBeers(url):
 
 @app.route('/users/<url>/editRating', methods = ['POST'])
 def editRating(url):
-
-    # Check to see if beer exists
     # TODO: more efficient query and update, return more robust errors...
 
     # Remove . and $ characters from brewery and beer, since they're keys in Mongo
@@ -89,23 +87,8 @@ def editRating(url):
     user['beer'][brewery][beer]['rating'] = rating
     user['beer'][brewery][beer]['notes'] = notes
 
-
-    # user['beer'][request.form['brewery']][request.form['beer']]['rating'] = request.form['rating']
-    # user['beer'][request.form['brewery']][request.form['beer']]['notes'] = request.form['tastingNotes']
     mongo.db.users.update({'url' : url}, user)
     return('success')
-
-    # if(user['beer'][request.form['brewery']][request.form['beer']]):
-    #     # Update rating and notes
-    #     user['beer'][request.form['brewery']][request.form['beer']]['rating'] = request.form['rating']
-    #     user['beer'][request.form['brewery']][request.form['beer']]['notes'] = request.form['tastingNotes']
-    #     mongo.db.users.update({'url' : url}, user)
-    #     return('success')
-        
-    # else:
-    #     return('error')
-
-    # print(request.form['brewery'], request.form['beer'], request.form['rating'], request.form['tastingNotes'])
 
 @app.route('/beers')
 def hello():
