@@ -7,9 +7,15 @@ $.getJSON({'url': getString, 'async': false}, function(r){
 })
 
 // Build the brewery selectors
+var sortedBreweries = []
 for (brewery in result.beer) {
-    $('#brewerySelector').append('<option>' + brewery + '</option>')
+    sortedBreweries.push(brewery)
 }
+sortedBreweries.sort()
+for (var i =0; i < sortedBreweries.length; i++) {
+    $('#brewerySelector').append('<option>' + sortedBreweries[i] + '</option>')
+}
+ 
 $('#brewerySelector').append('<option>Other</option>')
 
 // Build beer list based on currently selected brewery
@@ -29,27 +35,32 @@ $('#submitChanges').on('click', editRating)
 
 // Emptys the list of beers and refreshes based on the brewery selected
 function buildBeerSelector(brewery) {
-// Build out brewery if other
-if(brewery === 'Other'){
-    $('#otherBrewery').val('')
-    $('#otherBrewery').css('display', 'block')
-    $('#beerSelector').empty()
-    $('#beerSelector').append('<option>Other</option>')
-    $('#otherBeer').css('display', 'block')
-    displayBeerRating('Other', 'Other')
-    return
-} else {
-    $('#otherBrewery').css('display', 'none')
-    $('#otherBeer').css('display', 'none')
-}
+    // Build out brewery if other
+    if(brewery === 'Other'){
+        $('#otherBrewery').val('')
+        $('#otherBrewery').css('display', 'block')
+        $('#beerSelector').empty()
+        $('#beerSelector').append('<option>Other</option>')
+        $('#otherBeer').css('display', 'block')
+        displayBeerRating('Other', 'Other')
+        return
+    } else {
+        $('#otherBrewery').css('display', 'none')
+        $('#otherBeer').css('display', 'none')
+    }
 
-$('#beerSelector').empty()
-for (beer in result.beer[brewery]){
-    $('#beerSelector').append('<option>' + beer + '</option>')
-}
-$('#beerSelector').append('<option>Other</option>')
-// Display rating or tasting notes
-displayBeerRating($('#brewerySelector').val(), $('#beerSelector').val())
+    $('#beerSelector').empty()
+    var sortedBeers = []
+    for (beer in result.beer[brewery]){
+        sortedBeers.push(beer)
+    }
+    sortedBeers.sort()
+    for (var i = 0; i < sortedBeers.length; i++){
+        $('#beerSelector').append('<option>' + sortedBeers[i] + '</option>')
+    }
+    $('#beerSelector').append('<option>Other</option>')
+    // Display rating or tasting notes
+    displayBeerRating($('#brewerySelector').val(), $('#beerSelector').val())
 
 }
 
