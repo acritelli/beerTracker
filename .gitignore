@@ -1,1 +1,3 @@
 mongo/
+config.py
+__pycache__
