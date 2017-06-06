@@ -102,8 +102,8 @@ result.beer[brewery][beer]['rating'] = rating
 result.beer[brewery][beer]['notes'] = tastingNotes
 $.post(postStr, data, function(r) {
     if(r === 'success') {
-        $('#successModal .alert-success').text('Successfully updated ' + beer)
-        $('#successModal').modal('toggle')
+        $('.alert').text('Successfully updated ' + brewery + ' ' + beer)
+        $('.alert').css('display', 'block')
     }
     // TODO: actually handle errors
 })
@@ -111,6 +111,7 @@ $.post(postStr, data, function(r) {
 
 function displayBeerRating (brewery, beer) {
     // Account for other beer
+    $('.alert').css('display', 'none')
     if (beer === 'Other') {
         $('#otherBeer').val('')
         $('#otherBeer').css('display', 'block')

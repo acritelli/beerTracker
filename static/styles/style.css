@@ -16,5 +16,9 @@ h3 {
 }
 
 strong {
-    color: red
+    color: red;
+}
+
+.alert {
+    display: none;
 }
