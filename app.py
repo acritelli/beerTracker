@@ -4,11 +4,16 @@ from flask_pymongo import PyMongo
 from bson.json_util import dumps
 from csv import writer
 from io import StringIO
+import config
         
 
 app = Flask(__name__)
 app.config['MONGO_DBNAME'] = 'beerexpo'
-app.config['MAIL_DEFAULT_SENDER'] = 'expotracker'
+
+if(config.MONGO_USERNAME):
+    app.config['MONGO_USERNAME'] = config.MONGO_USERNAME
+if(config.MONGO_PASSWORD):
+    app.config['MONGO_PASSWORD'] = config.MONGO_PASSWORD
 mongo = PyMongo(app)
 
 # Sign up page
