@@ -9,3 +9,8 @@
 .row {
     margin-top: 10px;
 }
+
+h3 {
+    color: red;
+    font-weight: bold;
+}

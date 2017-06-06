@@ -107,6 +107,9 @@ def downloadRatings(url):
     output.headers["Content-type"] = "text/csv"
     return output
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
     
     
 
