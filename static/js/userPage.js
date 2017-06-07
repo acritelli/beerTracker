@@ -91,22 +91,22 @@ function editRating(){
         'tastingNotes': tastingNotes
     }
 
-// Update original response that we got (add if this was a different beer)
-if ($('#brewerySelector').val() === 'Other') {
-    result.beer[brewery] = {}
-}
-if ($('#beerSelector').val() === 'Other') {
-    result.beer[brewery][beer] = {}
-}
-result.beer[brewery][beer]['rating'] = rating
-result.beer[brewery][beer]['notes'] = tastingNotes
-$.post(postStr, data, function(r) {
-    if(r === 'success') {
-        $('.alert').text('Successfully updated ' + brewery + ' ' + beer)
-        $('.alert').css('display', 'block')
+    // Update original response that we got (add if this was a different beer)
+    if ($('#brewerySelector').val() === 'Other') {
+        result.beer[brewery] = {}
     }
-    // TODO: actually handle errors
-})
+    if ($('#beerSelector').val() === 'Other') {
+        result.beer[brewery][beer] = {}
+    }
+    result.beer[brewery][beer]['rating'] = rating
+    result.beer[brewery][beer]['notes'] = tastingNotes
+    $.post(postStr, data, function(r) {
+        if(r === 'success') {
+            $('.alert').text('Successfully updated ' + brewery + ' ' + beer)
+            $('.alert').css('display', 'block')
+        }
+        // TODO: actually handle errors
+    })
 }
 
 function displayBeerRating (brewery, beer) {
