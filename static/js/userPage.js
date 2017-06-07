@@ -119,6 +119,7 @@ function displayBeerRating (brewery, beer) {
         $('#tastingNotes').val('')
         return
     }
+    $('#otherBeer').css('display', 'none')
     // Default to rating of 1
     if(result.beer[brewery][beer]['rating'] !== ''){
         $('#rating').val(result.beer[brewery][beer]['rating'])
