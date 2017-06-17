@@ -6,6 +6,9 @@ $.getJSON({'url': getString, 'async': false}, function(r){
     result = r
 })
 
+// Set the user's name on the page
+$('#nameHeader').text('Welcome ' + result['name'])
+
 // Build the brewery selectors
 var sortedBreweries = []
 for (brewery in result.beer) {
