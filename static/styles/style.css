@@ -22,3 +22,7 @@ strong {
 .alert {
     display: none;
 }
+
+#downloadRatings {
+    margin-top: 5%;
+}
