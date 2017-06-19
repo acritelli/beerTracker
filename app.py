@@ -33,19 +33,12 @@ def signup():
         print('Duplicate uuid found')
         return('Error')
 
-    # Init the user object with all breweries (may want to consider an "edit" flag to show if they've had something or not)
-    # TODO: handling for periods in beer name?
+    # Init the user object
     newUser = {
         'url': url,
         'name': request.form['name'],
         'beer': {}
     }
-    for brewery in mongo.db.defBeers.find():
-        newUser['beer'][brewery['name']] = {}
-        for beer in brewery['beers']:
-            newUser['beer'][brewery['name']][beer] = {}
-            newUser['beer'][brewery['name']][beer]['rating'] = ""
-            newUser['beer'][brewery['name']][beer]['notes'] = ""
     mongo.db.users.insert_one(newUser)
 
     # Send an email with the link
@@ -61,11 +54,22 @@ def user(url):
     # Display template
     return render_template('userPage.html', url=url)
 
-# TODO: alphabetical order
+# Returns a user object with a list of all beers (including those not yet rated)
 @app.route('/users/<url>/getBeers')
 def getBeers(url):
-    # Grab all beer info from user entry based on UUID.
+    # Grab user based on url (uuid) and all default beers
     user = mongo.db.users.find_one(({'url': url}))
+    defBeers = mongo.db.defBeers.find()
+
+    # Check to see if a user has rated a beer. If they haven't, add to user object to be returned
+    for brewery in defBeers:
+        if (not brewery['name'] in user['beer']):
+            user['beer'][brewery['name']] = {}
+        for beer in brewery['beers']:
+            print(brewery, beer)
+            if (not beer in user['beer'][brewery['name']]):
+                user['beer'][brewery['name']][beer] = {'rating':'', 'notes':''}
+
     return dumps(user)
 
 @app.route('/users/<url>/editRating', methods = ['POST'])
