@@ -17,14 +17,13 @@ if(config.MONGO_PASSWORD):
 mongo = PyMongo(app)
 
 # Sign up page
-# Accept an email, generate a random URL, store user info in Mongo, send an email with the URL
+# Accept a name, generate a random URL, store user info in Mongo
 @app.route('/')
 def landingPage():
     return render_template('signup.html')
 
 @app.route('/signup', methods = ['POST'])
 def signup():
-    # TODO: Check to see if this is a valid email address
 
     # Generate a UUID, verify not already in database
     url = uuid()
@@ -40,10 +39,6 @@ def signup():
         'beer': {}
     }
     mongo.db.users.insert_one(newUser)
-
-    # Send an email with the link
-    # msg = Message("Your unique URL is: ", recipients=[request.form['email']])
-    # mail.send(msg)
 
     # Redirect user to their page (template should recommend they bookmark)
     redirectStr = '/users/' + url
@@ -120,13 +115,6 @@ def downloadRatings(url):
 def hello():
     default_breweries = list(mongo.db.defBeers.find())
     return render_template('test.html', breweries=default_breweries)
-
-
-# Edit rating
-# Accept JSON of beer info. Get Mongo for user. If the entry exists, update it. If not, add it.
-
-# Get beer report
-# Generate a full report of the beer for a user from Mongo. Downloadable as CSV
 
 if __name__ == '__main__':
     app.run(debug=True)
