@@ -61,7 +61,6 @@ def getBeers(url):
         if (not brewery['name'] in user['beer']):
             user['beer'][brewery['name']] = {}
         for beer in brewery['beers']:
-            print(brewery, beer)
             if (not beer in user['beer'][brewery['name']]):
                 user['beer'][brewery['name']][beer] = {'rating':'', 'notes':''}
 
