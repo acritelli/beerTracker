@@ -106,9 +106,14 @@ function editRating(){
     $.post(postStr, data, function(r) {
         if(r === 'success') {
             $('.alert').text('Successfully updated ' + brewery + ' ' + beer)
+            $('.alert').removeClass('alert-danger').addClass('alert-success')
             $('.alert').css('display', 'block')
         }
-        // TODO: actually handle errors
+    })
+    .fail(function() {
+        $('.alert').text('Uh oh! Something went wrong. Please refresh and try again.')
+        $('.alert').removeClass('alert-success').addClass('alert-danger')
+        $('.alert').css('display', 'block')
     })
 }
 
@@ -123,11 +128,11 @@ function displayBeerRating (brewery, beer) {
         return
     }
     $('#otherBeer').css('display', 'none')
-    // Default to rating of 1
+    // Default to rating of null
     if(result.beer[brewery][beer]['rating'] !== ''){
         $('#rating').val(result.beer[brewery][beer]['rating'])
     } else {
-        $('#rating').val(1)
+        $('#rating').val('')
     }
     
     $('#tastingNotes').val(result.beer[brewery][beer]['notes'])

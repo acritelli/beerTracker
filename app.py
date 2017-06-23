@@ -81,6 +81,10 @@ def editRating(url):
     rating = request.form['rating']
     notes = request.form['tastingNotes']
 
+    # Abort if rating or notes aren't set.
+    if (not rating and not notes):
+        abort(500)
+
     user = mongo.db.users.find_one({'url': url})
 
     # Account for new breweries/beers
