@@ -35,9 +35,9 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Dashboard <span class="sr-only">(current)</span></a></li>
+                <li class="active"><a href="/users/{{ url }}">Dashboard <span class="sr-only">(current)</span></a></li>
                 <li><a href="">Must Try Beers</a></li>
-                <li><a href="">Download CSV</a></li>
+                <li><a href="/users/{{ url }}/downloadRatings">Download CSV</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/static/about.html">About</a></li>
@@ -85,16 +85,6 @@
                     </form>
                     <button type="submit" class="btn btn-success" id="submitChanges">Submit</button>
                     <div class="alert" role="alert"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="/users/{{ url }}/downloadRatings"><button type="submit" class="btn btn-info" id="downloadRatings">Download Ratings (.csv)</button></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="/static/about.html">About</a>
                 </div>
             </div>
         </div>
