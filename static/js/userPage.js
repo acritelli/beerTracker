@@ -84,12 +84,17 @@ function editRating(){
         $('#beerSelector').append('<option>' + beer + '</option>')
         } else {
         var beer = $('#beerSelector').val()
-    }     
+    }
+
+    // Set if beer is a must try
+    var mustTry = $('[name="mustTry"]').prop('checked')
+
     var rating = $('#rating').val()
     var tastingNotes = $('#tastingNotes').val()
     var data = {
         'brewery': brewery,
         'beer': beer,
+        'mustTry': mustTry,
         'rating': rating,
         'tastingNotes': tastingNotes
     }

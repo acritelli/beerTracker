@@ -80,9 +80,10 @@ def editRating(url):
 
     rating = request.form['rating']
     notes = request.form['tastingNotes']
+    mustTry = request.form['mustTry']
 
-    # Abort if rating or notes aren't set.
-    if (not rating and not notes):
+    # Abort if rating, notes, or mustTry aren't set (i.e. nothing has changed)
+    if (not rating and not notes and not mustTry):
         abort(500)
 
     user = mongo.db.users.find_one({'url': url})
@@ -95,6 +96,7 @@ def editRating(url):
 
     user['beer'][brewery][beer]['rating'] = rating
     user['beer'][brewery][beer]['notes'] = notes
+    user['beer'][brewery][beer]['mustTry'] = mustTry
 
     mongo.db.users.update({'url' : url}, user)
     return('success')
