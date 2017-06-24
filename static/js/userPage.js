@@ -87,7 +87,7 @@ function editRating(){
     }
 
     // Set if beer is a must try
-    var mustTry = $('[name="mustTry"]').prop('checked')
+    var mustTry = $('#mustTry').prop('checked')
 
     var rating = $('#rating').val()
     var tastingNotes = $('#tastingNotes').val()
@@ -108,6 +108,7 @@ function editRating(){
     }
     result.beer[brewery][beer]['rating'] = rating
     result.beer[brewery][beer]['notes'] = tastingNotes
+    result.beer[brewery][beer]['mustTry'] = mustTry
     $.post(postStr, data, function(r) {
         if(r === 'success') {
             $('.alert').text('Successfully updated ' + brewery + ' ' + beer)
@@ -138,6 +139,13 @@ function displayBeerRating (brewery, beer) {
         $('#rating').val(result.beer[brewery][beer]['rating'])
     } else {
         $('#rating').val('')
+    }
+
+    // Toggle mustTry
+    if(result.beer[brewery][beer]['mustTry']) {
+        $('#mustTry').bootstrapToggle('on')
+    } else {
+        $('#mustTry').bootstrapToggle('off')
     }
     
     $('#tastingNotes').val(result.beer[brewery][beer]['notes'])

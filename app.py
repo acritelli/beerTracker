@@ -80,7 +80,11 @@ def editRating(url):
 
     rating = request.form['rating']
     notes = request.form['tastingNotes']
-    mustTry = request.form['mustTry']
+    if (request.form['mustTry'] == 'true'):
+        mustTry = True
+    else:
+        mustTry = False
+   
 
     user = mongo.db.users.find_one({'url': url})
 

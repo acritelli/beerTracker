@@ -8,6 +8,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <!-- FontAwesome -->
         <script src="https://use.fontawesome.com/3d0f274b59.js"></script>
+        <!-- Bootstrap Toggle -->
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
         <!-- Local CSS -->
         <link rel="stylesheet" href="/static/styles/style.css">
         <title>Beer Tracker - Dashboard</title>
@@ -35,7 +38,7 @@
                         <input type="text" class="form-control" id="otherBeer" placeholder="Beer Name">
                         <div class="mustTryDiv">
                             <label for="mustTry">Must try?</label>
-                            <input type="checkbox" name="mustTry"><br />
+                            <input type="checkbox" name="mustTry" id="mustTry" data-toggle="toggle" data-on="Yes" data-off="No" data-onstyle="success"><br />
                         </div>
                         <label for="rating">Rating (out of 5)</label>
                         <select class="form-control" id="rating" name="rating">
