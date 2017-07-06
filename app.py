@@ -126,13 +126,6 @@ def downloadRatings(url):
                 row.append(user['beer'][brewery][beer]['mustTry'])
             else:
                 row.append('')
-            # row = [
-            #     brewery, 
-            #     beer, 
-            #     user['beer'][brewery][beer]['rating'], 
-            #     user['beer'][brewery][beer]['notes'], 
-            #     user['beer'][brewery][beer]['mustTry']
-            #     ]
             csv.writerow(row)
     output = make_response(stringIO.getvalue())
     output.headers["Content-Disposition"] = "attachment; filename=beerRatings.csv"
