@@ -105,11 +105,34 @@ def editRating(url):
 def downloadRatings(url):
     stringIO = StringIO()
     csv = writer(stringIO)
-    csv.writerow(['Brewery', 'Beer', 'Rating', 'Notes'])
+    csv.writerow(['Brewery', 'Beer', 'Rating', 'Notes', 'Must Try'])
     user = mongo.db.users.find_one({'url': url})
-    for brewery in user['beer']:
-        for beer in user['beer'][brewery]:
-            row = [brewery, beer, user['beer'][brewery][beer]['rating'], user['beer'][brewery][beer]['notes']]
+    for brewery in sorted(user['beer']):
+        for beer in sorted(user['beer'][brewery]):
+            row = [brewery, beer]
+
+            # Check to see if keys exist for a user, if not fill with a blank
+            if 'rating' in user['beer'][brewery][beer]:
+                row.append(user['beer'][brewery][beer]['rating'])
+            else:
+                row.append('')
+
+            if 'notes' in user['beer'][brewery][beer]:
+                row.append(user['beer'][brewery][beer]['notes'])
+            else:
+                row.append('')
+
+            if 'mustTry' in user['beer'][brewery][beer]:
+                row.append(user['beer'][brewery][beer]['mustTry'])
+            else:
+                row.append('')
+            # row = [
+            #     brewery, 
+            #     beer, 
+            #     user['beer'][brewery][beer]['rating'], 
+            #     user['beer'][brewery][beer]['notes'], 
+            #     user['beer'][brewery][beer]['mustTry']
+            #     ]
             csv.writerow(row)
     output = make_response(stringIO.getvalue())
     output.headers["Content-Disposition"] = "attachment; filename=beerRatings.csv"
