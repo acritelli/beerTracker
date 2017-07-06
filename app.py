@@ -22,6 +22,10 @@ mongo = PyMongo(app)
 def landingPage():
     return render_template('signup.html')
 
+@app.route('/about')
+def aboutPage():
+    return render_template('about.html')
+
 @app.route('/signup', methods = ['POST'])
 def signup():
 

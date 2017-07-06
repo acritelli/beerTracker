@@ -1,60 +1,54 @@
-<html>
-    <head>
-        <!-- Bootstrap - Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        <!-- FontAwesome -->
-        <script src="https://use.fontawesome.com/3d0f274b59.js"></script>
-        <!-- Local CSS -->
-        <link rel="stylesheet" href="/static/styles/style.css">
-        <title>Beer Tracker - Sign-up</title>
-    </head>
+{% extends "layout.html" %}
+{% block title %}Sign-up{% endblock %}
+{% block head %}
+    {{ super() }}
+    <!--jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <!-- Bootstrap Toggle -->
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+{% endblock %}
 
-    <body>
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1><i class="fa fa-beer" aria-hidden="true"></i>  Beer Tracker</h1>
+                <p>This site provides a way to track your beer consumption and tasting notes at the <a href="http://rochesterrealbeer.com/expo/2017/">2017 Rochester Real Beer Expo.</a> It's designed to be a quick and easy way to track beers that you like or dislike during the event.</p>
+                <p>This service is not affiliated with the Real Beer Expo.</p>
+                
+                <h2>Features</h2>
+                <ul>
+                    <li>All announced beers already added</li>
+                    <li>Track ratings and tasting notes</li>
+                    <li>Download your ratings as an Excel spreadsheet after the event</li>
+                    <li>Ability to add breweries and beers not listed</li>
+                    <li>Free sign-up, with no account creation required</li>
+                </ul>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h1><i class="fa fa-beer" aria-hidden="true"></i>  Beer Tracker</h1>
-                    <p>This site provides a way to track your beer consumption and tasting notes at the <a href="http://rochesterrealbeer.com/expo/2017/">2017 Rochester Real Beer Expo.</a> It's designed to be a quick and easy way to track beers that you like or dislike during the event.</p>
-                    <p>This service is not affiliated with the Real Beer Expo.</p>
-                    
-                    <h2>Features</h2>
-                    <ul>
-                        <li>All announced beers already added</li>
-                        <li>Track ratings and tasting notes</li>
-                        <li>Download your ratings as an Excel spreadsheet after the event</li>
-                        <li>Ability to add breweries and beers not listed</li>
-                        <li>Free sign-up, with no account creation required</li>
-                    </ul>
+                <h2>Dashboard Screenshot</h2>
+                <a href="/static/img/screenshot.png"><img src="/static/img/screenshot.png" height="200" width="417"></a>
 
-                    <h2>Dashboard Screenshot</h2>
-                    <a href="/static/img/screenshot.png"><img src="/static/img/screenshot.png" height="200" width="417"></a>
+                <h2>Sign-up</h2>
+                <p>Sign-up is free and easy. Simply enter your name below, and you will be taken to a unique URL that represents your beer ratings.</p>
+                <p>Once you are taken to your unique page, <strong>BE SURE TO BOOKMARK OR SAVE THE PAGE.</strong> This URL is your <strong>only</strong> access to your unique page. If lost, you will need to create another account.</p>
+                <p>This website will be brought down one week after the expo, so please be sure to export your CSV before then if you want it</p>
 
-                    <h2>Sign-up</h2>
-                    <p>Sign-up is free and easy. Simply enter your name below, and you will be taken to a unique URL that represents your beer ratings.</p>
-                    <p>Once you are taken to your unique page, <strong>BE SURE TO BOOKMARK OR SAVE THE PAGE.</strong> This URL is your <strong>only</strong> access to your unique page. If lost, you will need to create another account.</p>
-                    <p>This website will be brought down one week after the expo, so please be sure to export your CSV before then if you want it</p>
-
-                    <form action="/signup" method="post">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="name" class="form-control" id="name" placeholder="Joe Smith" name="name">
-                        </div>
-                        <button type="submit" class="btn btn-success">Create Account</button>
-                    </form>
-                    <h2>Why not just use Untappd?</h2>
-                    <p>Untappd is awesome! I just find it tedious to try searching for beers while I'm at beer tasting events. I usually end up carrying around a slip of paper to take notes on (and see others doing the same). Having a simple interface to quickly jot down notes and rate my favorite beers will hopefully make this easier. Plus, you can export the notes to an Excel file and manually enter them into Untappd later. It's definitely not seamless, but I personally prefer it to looking up every single brew during the event.</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="/static/about.html">About</a>
-                </div>
+                <form action="/signup" method="post">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="name" class="form-control" id="name" placeholder="Joe Smith" name="name">
+                    </div>
+                    <button type="submit" class="btn btn-success">Create Account</button>
+                </form>
+                <h2>Why not just use Untappd?</h2>
+                <p>Untappd is awesome! I just find it tedious to try searching for beers while I'm at beer tasting events. I usually end up carrying around a slip of paper to take notes on (and see others doing the same). Having a simple interface to quickly jot down notes and rate my favorite beers will hopefully make this easier. Plus, you can export the notes to an Excel file and manually enter them into Untappd later. It's definitely not seamless, but I personally prefer it to looking up every single brew during the event.</p>
             </div>
         </div>
-
-
-
-    </body>
-
-</html>
+        <div class="row">
+            <div class="col-sm-12">
+                <a href="/static/about.html">About</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
