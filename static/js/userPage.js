@@ -99,21 +99,21 @@ function editRating(){
         'tastingNotes': tastingNotes
     }
 
-    // Update original response that we got (add if this was a different beer)
-    if ($('#brewerySelector').val() === 'Other') {
-        result.beer[brewery] = {}
-    }
-    if ($('#beerSelector').val() === 'Other') {
-        result.beer[brewery][beer] = {}
-    }
-    result.beer[brewery][beer]['rating'] = rating
-    result.beer[brewery][beer]['notes'] = tastingNotes
-    result.beer[brewery][beer]['mustTry'] = mustTry
     $.post(postStr, data, function(r) {
         if(r === 'success') {
             $('.alert').text('Successfully updated ' + brewery + ' ' + beer)
             $('.alert').removeClass('alert-danger').addClass('alert-success')
             $('.alert').css('display', 'block')
+            // Update original response that we got (add if this was a different beer)
+            if ($('#brewerySelector').val() === 'Other') {
+                result.beer[brewery] = {}
+            }
+            if ($('#beerSelector').val() === 'Other') {
+                result.beer[brewery][beer] = {}
+            }
+            result.beer[brewery][beer]['rating'] = rating
+            result.beer[brewery][beer]['notes'] = tastingNotes
+            result.beer[brewery][beer]['mustTry'] = mustTry
         }
     })
     .fail(function() {
