@@ -1,40 +1,68 @@
-var getString = '/users/' + url + '/getBeers'
-
-// Asynch get JSON of beers (I know, this is bad, but I need the object later and don't feel like being in callback hell)
+var getString
 var result
-$.getJSON({'url': getString, 'async': false}, function(r){
-    result = r
+var addOtherBrewery = true
+var addOtherBeer = true
+
+// Add handler to must try beers button
+$('#mustTryBeersBtn').on('click', function () {
+    $(this).addClass('active')
+    getString = '/users/' + url + '/getMustTryBeers'
+
+    $.getJSON({'url': getString}, function(r){
+        result = r
+        addOtherBrewery = false
+        addOtherBeer = false
+        renderFullBeerList()
+    })
 })
 
-// Set the user's name on the page
-$('#nameHeader').text('Welcome ' + result['name'])
-
-// Build the brewery selectors
-var sortedBreweries = []
-for (brewery in result.beer) {
-    sortedBreweries.push(brewery)
-}
-sortedBreweries.sort()
-for (var i =0; i < sortedBreweries.length; i++) {
-    $('#brewerySelector').append('<option>' + sortedBreweries[i] + '</option>')
-}
- 
-$('#brewerySelector').append('<option>Other</option>')
-
-// Build beer list based on currently selected brewery
-buildBeerSelector($('#brewerySelector').val())
-
-// Add change listeners to the brewery objects so that the beer list is rebuilt when the brewery changes.
-$('#brewerySelector').on('change', function(){
-    buildBeerSelector($(this).val())
-})
-
-// Add change listener to beer object so that we can display existing rating, if applicable
-$('#beerSelector').on('change', function() {
-    displayBeerRating($('#brewerySelector').val(), $(this).val())
-})
-
+// Add handler to submit button
 $('#submitChanges').on('click', editRating)
+
+$(document).ready(function () {
+    getString = '/users/' + url + '/getBeers'
+    $.getJSON({'url': getString}, function(r){
+        result = r
+        renderFullBeerList()
+    })
+})
+
+// Builds lists with all beers (as opposed to just must trys)
+function renderFullBeerList () {
+    $('#nameHeader').text('Welcome ' + result['name'])
+    buildBrewerySelector()
+}
+
+function buildBrewerySelector () {
+    // Build the brewery selectors
+    $('#brewerySelector').empty()
+    var sortedBreweries = []
+    for (brewery in result.beer) {
+        sortedBreweries.push(brewery)
+    }
+    sortedBreweries.sort()
+    for (var i =0; i < sortedBreweries.length; i++) {
+        $('#brewerySelector').append('<option>' + sortedBreweries[i] + '</option>')
+    }
+    if (addOtherBrewery) {
+        $('#brewerySelector').append('<option>Other</option>')
+    }
+
+    // Build beer list based on currently selected brewery
+    buildBeerSelector($('#brewerySelector').val())
+}
+
+function refreshListeners () {
+    // Add change listeners to the brewery objects so that the beer list is rebuilt when the brewery changes.
+    $('#brewerySelector').on('change', function(){
+        buildBeerSelector($(this).val())
+    })
+
+    // Add change listener to beer object so that we can display existing rating, if applicable
+    $('#beerSelector').on('change', function() {
+        displayBeerRating($('#brewerySelector').val(), $(this).val())
+    })
+}
 
 // Emptys the list of beers and refreshes based on the brewery selected
 function buildBeerSelector(brewery) {
@@ -61,10 +89,14 @@ function buildBeerSelector(brewery) {
     for (var i = 0; i < sortedBeers.length; i++){
         $('#beerSelector').append('<option>' + sortedBeers[i] + '</option>')
     }
-    $('#beerSelector').append('<option>Other</option>')
+
+    if (addOtherBeer) {
+        $('#beerSelector').append('<option>Other</option>')
+    }
     // Display rating or tasting notes
     displayBeerRating($('#brewerySelector').val(), $('#beerSelector').val())
 
+    refreshListeners()
 }
 
 function editRating(){
