@@ -5,6 +5,7 @@ from bson.json_util import dumps
 from csv import writer
 from io import StringIO
 import config
+from copy import deepcopy
         
 
 app = Flask(__name__)
@@ -69,6 +70,25 @@ def getBeers(url):
                 user['beer'][brewery['name']][beer] = {'rating':'', 'notes':''}
 
     return dumps(user)
+
+# Get must try beers. May fold this into regular getBeers at some point
+@app.route('/users/<url>/getMustTryBeers')
+def getMustTryBeers(url):
+    user = mongo.db.users.find_one(({'url': url}))
+    # Make a copy so that we can delete items in loop (can't change size of a dict in a loop)
+    mustTryBeers = deepcopy(user)
+
+    # Iterate over user's beers and delete any that aren't must try from the copy mustTryBeers
+    # We do this to a copy (and return the copy) because we can't alter the dict size in a loop
+    for brewery in user['beer']:
+        for beer in user['beer'][brewery]:
+            if 'mustTry' in user['beer'][brewery][beer] and not user['beer'][brewery][beer]['mustTry']:
+                print(brewery + beer + ' not a must try')
+                del mustTryBeers['beer'][brewery][beer]
+        # If brewery dictionary is now empty (all have been deleted), then remove the brewery
+        if not mustTryBeers['beer'][brewery]:
+            del mustTryBeers['beer'][brewery]
+    return dumps(mustTryBeers)
 
 @app.route('/users/<url>/editRating', methods = ['POST'])
 def editRating(url):
