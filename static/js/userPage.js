@@ -23,9 +23,15 @@ $('#submitChanges').on('click', editRating)
 
 $(document).ready(function () {
     getString = '/users/' + url + '/getBeers'
-    $.getJSON({'url': getString}, function(r){
-        result = r
-        renderFullBeerList()
+    $.ajax({'url': getString,
+        'dataType': 'json',
+        'success': function(r) {
+            result = r
+            renderFullBeerList()
+        },
+        'error': function() {
+            window.location='/'
+        }
     })
 })
 
@@ -40,6 +46,7 @@ function buildBrewerySelector () {
     $('#brewerySelector').empty()
     var sortedBreweries = []
     for (brewery in result.beer) {
+        console.log(brewery)
         sortedBreweries.push(brewery)
     }
     sortedBreweries.sort()
