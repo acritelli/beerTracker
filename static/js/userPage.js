@@ -5,6 +5,8 @@ var addOtherBeer = true
 
 // Add handler to must try beers button
 $('#mustTryBeersBtn').on('click', function () {
+    // Toggle buttons
+    $('.active').removeClass('active')
     $(this).addClass('active')
     getString = '/users/' + url + '/getMustTryBeers'
 
