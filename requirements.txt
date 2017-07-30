@@ -1,0 +1,3 @@
+flask
+shortuuid
+flask_pymongo
