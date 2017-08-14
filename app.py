@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, make_response
+from flask import Flask, render_template, request, redirect, jsonify, make_response, url_for
 from shortuuid import uuid
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
@@ -49,10 +49,27 @@ def signup():
     redirectStr = '/users/' + url
     return redirect(redirectStr)
 
-@app.route('/users/<url>')
-def user(url):
+@app.route('/users/<uuid>')
+def user(uuid, selectedBrewery=None, selectedBeer=None):
+    templateVars = {}
+    templateVars['activePage'] = 'Dashboard'
+    templateVars['url'] =  uuid
+    templateVars['action'] = 'displayAll'
+
+    if 'selectedBrewery' in request.args and 'selectedBeer' in request.args:
+        templateVars['selectedBrewery'] = request.args['selectedBrewery']
+        templateVars['selectedBeer'] = request.args['selectedBeer']
+
     # Display template
-    return render_template('userPage.html', url=url)
+    return render_template('userPage.html', templateVars=templateVars)
+
+@app.route('/users/<uuid>/mustTryBeers')
+def mustTryBeers(uuid):
+    templateVars = {}
+    templateVars['activePage'] = 'mustTryBeers'
+    templateVars['url'] =  uuid
+    templateVars['action'] = 'displayMustTry'
+    return render_template('userPage.html', templateVars=templateVars)
 
 # Returns a user object with a list of all beers (including those not yet rated)
 @app.route('/users/<url>/getBeers')
@@ -95,20 +112,20 @@ def editRating(url):
     # TODO: more efficient query and update, return more robust errors...
 
     # Remove . and $ characters from brewery and beer, since they're keys in Mongo
-    brewery = request.form['brewery']
+    brewery = request.form['brewerySelector']
     brewery = brewery.replace('.', '')
     brewery = brewery.replace('$', '')
-    beer = request.form['beer']
+    beer = request.form['beerSelector']
     beer = beer.replace('.', '')
     beer = beer.replace('$', '')
 
     rating = request.form['rating']
     notes = request.form['tastingNotes']
-    if (request.form['mustTry'] == 'true'):
+    mustTry = False
+    if 'mustTry' in request.form:
         mustTry = True
     else:
         mustTry = False
-   
 
     user = mongo.db.users.find_one({'url': url})
 
@@ -123,14 +140,14 @@ def editRating(url):
     user['beer'][brewery][beer]['mustTry'] = mustTry
 
     mongo.db.users.update({'url' : url}, user)
-    return('success')
+    return(redirect(url_for('user', uuid=url, selectedBrewery=brewery, selectedBeer=beer)))
 
-@app.route('/users/<url>/downloadRatings')
-def downloadRatings(url):
+@app.route('/users/<uuid>/downloadRatings')
+def downloadRatings(uuid):
     stringIO = StringIO()
     csv = writer(stringIO)
     csv.writerow(['Brewery', 'Beer', 'Rating', 'Notes', 'Must Try'])
-    user = mongo.db.users.find_one({'url': url})
+    user = mongo.db.users.find_one({'url': uuid})
     for brewery in sorted(user['beer']):
         for beer in sorted(user['beer'][brewery]):
             row = [brewery, beer]

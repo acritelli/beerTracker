@@ -3,50 +3,53 @@ var result
 var addOtherBrewery = true
 var addOtherBeer = true
 
-// Add handler to must try beers button
-$('#mustTryBeersBtn').on('click', function () {
-    // Toggle buttons
-    $('.active').removeClass('active')
-    $(this).addClass('active')
-    getString = '/users/' + url + '/getMustTryBeers'
+//TODO: add a build page:
+//  Makes page Headers x
+//   makes ajax request based on action x
+//   builds page x
+// toggles a selected beer, if defined
+// $('#brewerySelector').val('Almanac')
 
-    $.getJSON({'url': getString}, function(r){
-        result = r
+// TODO: remove edit button and migrate functionality to regular form post x
+
+// Builds a page based on desired action (passed in template) with the specified brewery/beer selected
+function buildPage (action, selectedBrewery, selectedBeer) {
+    // Decode brewery and beer selectors, in case there were any HTML special chars
+    selectedBrewery = $("<textarea/>").html(selectedBrewery).text();
+    selectedBeer = $("<textarea/>").html(selectedBeer).text();
+
+    // Set the appropriate AJAX string based on action
+    if (action === 'displayAll') {
+        getString = '/users/' + url + '/getBeers'
+    } else if (action === 'displayMustTry') {
         addOtherBrewery = false
         addOtherBeer = false
-        renderFullBeerList()
-    })
-})
-
-// Add handler to submit button
-$('#submitChanges').on('click', editRating)
-
-$(document).ready(function () {
-    getString = '/users/' + url + '/getBeers'
+        getString = '/users/' + url + '/getMustTryBeers'
+    }
+    // Get JSON and build the page. Return to home if error
     $.ajax({'url': getString,
         'dataType': 'json',
         'success': function(r) {
             result = r
-            renderFullBeerList()
+            renderFullBeerList(selectedBrewery, selectedBeer)
         },
         'error': function() {
             window.location='/'
         }
     })
-})
-
-// Builds lists with all beers (as opposed to just must trys)
-function renderFullBeerList () {
-    $('#nameHeader').text('Welcome ' + result['name'])
-    buildBrewerySelector()
 }
 
-function buildBrewerySelector () {
+// Builds lists with all beers (as opposed to just must trys)
+function renderFullBeerList (selectedBrewery, selectedBeer) {
+    $('#nameHeader').text('Welcome ' + result['name'])
+    buildBrewerySelector(selectedBrewery, selectedBeer)
+}
+
+function buildBrewerySelector (selectedBrewery, selectedBeer) {
     // Build the brewery selectors
     $('#brewerySelector').empty()
     var sortedBreweries = []
     for (brewery in result.beer) {
-        console.log(brewery)
         sortedBreweries.push(brewery)
     }
     sortedBreweries.sort()
@@ -57,8 +60,12 @@ function buildBrewerySelector () {
         $('#brewerySelector').append('<option>Other</option>')
     }
 
+    if (selectedBrewery) {
+        $('#brewerySelector').val(selectedBrewery)
+    }
+
     // Build beer list based on currently selected brewery
-    buildBeerSelector($('#brewerySelector').val())
+    buildBeerSelector($('#brewerySelector').val(), selectedBeer)
 }
 
 function refreshListeners () {
@@ -74,7 +81,7 @@ function refreshListeners () {
 }
 
 // Emptys the list of beers and refreshes based on the brewery selected
-function buildBeerSelector(brewery) {
+function buildBeerSelector(brewery, selectedBeer) {
     // Build out brewery if other
     if(brewery === 'Other'){
         $('#otherBrewery').val('')
@@ -102,66 +109,15 @@ function buildBeerSelector(brewery) {
     if (addOtherBeer) {
         $('#beerSelector').append('<option>Other</option>')
     }
+
+    if (selectedBeer) {
+        $('#beerSelector').val(selectedBeer)
+    }
+
     // Display rating or tasting notes
     displayBeerRating($('#brewerySelector').val(), $('#beerSelector').val())
 
     refreshListeners()
-}
-
-function editRating(){
-    var postStr = '/users/' + url + '/editRating'
-
-    // If brewery is other, then we need to get the name of the new brewery
-    if ($('#brewerySelector').val() === 'Other') {
-        var brewery = $('#otherBrewery').val()
-        $('#brewerySelector').append('<option>' + brewery + '</option>')
-    } else{
-        var brewery = $('#brewerySelector').val()
-    }
-
-    // If beer is other, then we need to get the name of the new beer and update the beer list
-    if ($('#beerSelector').val() === 'Other') {
-        var beer = $('#otherBeer').val()
-        $('#beerSelector').append('<option>' + beer + '</option>')
-        } else {
-        var beer = $('#beerSelector').val()
-    }
-
-    // Set if beer is a must try
-    var mustTry = $('#mustTry').prop('checked')
-
-    var rating = $('#rating').val()
-    var tastingNotes = $('#tastingNotes').val()
-    var data = {
-        'brewery': brewery,
-        'beer': beer,
-        'mustTry': mustTry,
-        'rating': rating,
-        'tastingNotes': tastingNotes
-    }
-
-    $.post(postStr, data, function(r) {
-        if(r === 'success') {
-            $('.alert').text('Successfully updated ' + brewery + ' ' + beer)
-            $('.alert').removeClass('alert-danger').addClass('alert-success')
-            $('.alert').css('display', 'block')
-            // Update original response that we got (add if this was a different beer)
-            if ($('#brewerySelector').val() === 'Other') {
-                result.beer[brewery] = {}
-            }
-            if ($('#beerSelector').val() === 'Other') {
-                result.beer[brewery][beer] = {}
-            }
-            result.beer[brewery][beer]['rating'] = rating
-            result.beer[brewery][beer]['notes'] = tastingNotes
-            result.beer[brewery][beer]['mustTry'] = mustTry
-        }
-    })
-    .fail(function() {
-        $('.alert').text('Uh oh! Something went wrong. Please refresh and try again.')
-        $('.alert').removeClass('alert-success').addClass('alert-danger')
-        $('.alert').css('display', 'block')
-    })
 }
 
 function displayBeerRating (brewery, beer) {

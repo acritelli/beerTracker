@@ -30,15 +30,23 @@
             <a class="navbar-brand" href="/"><i class="fa fa-beer" aria-hidden="true"></i>  Beer Tracker</a>
             </div>
 
+            {% if templateVars %}
             <!-- Only Display buttons if a user is logged in -->
-            {% if url %}
+            {% if templateVars['url'] %}
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/users/{{ url }}">Dashboard <span class="sr-only">(current)</span></a></li>
-                <li id="mustTryBeersBtn"><a>Must Try Beers</a></li>
-                <li><a href="/users/{{ url }}/downloadRatings">Download CSV</a></li>
+                <li {% if templateVars['activePage'] == 'Dashboard' %} class="active"{% endif %}>
+                    <a href="{{ url_for('user', uuid=templateVars['url']) }}">Dashboard <span class="sr-only">(current)</span></a>
+                </li>
+                <li id="mustTryBeersBtn" {% if templateVars['activePage'] == 'mustTryBeers' %} class="active"{% endif %}>
+                    <a href="{{ url_for('mustTryBeers', uuid=templateVars['url']) }}">Must Try Beers</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('downloadRatings', uuid=templateVars['url']) }}">Download CSV</a>
+                </li>
             </ul>
+            {% endif %}
             {% endif %}
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/about">About</a></li>

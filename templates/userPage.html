@@ -16,7 +16,7 @@
                 <h3>BOOKMARK THIS PAGE!</h3>
                 <p>This is your personal dashboard. Bookmark this page so that you can come back to it later. If you loose this URL, then you will need to create a new account.</p>
                 <p>This website will be brought down one week after the expo, so please be sure to export your CSV before then if you want it</p>
-                <form>
+                <form action="/users/{{ templateVars['url'] }}/editRating" method="post">
                     <label for="brewerySelector">Brewery</label>
                     <select class="form-control" id="brewerySelector" name="brewerySelector">
                     </select>
@@ -44,16 +44,23 @@
                     </select>
                     <label for="tastingNotes">Tasting Notes</label>
                     <textarea class="form-control" placeholder="Tasting notes" name="tastingNotes" id="tastingNotes"></textarea>
+                    <button type="submit" class="btn btn-success" id="submitChanges">Submit</button>
                 </form>
-                <button type="submit" class="btn btn-success" id="submitChanges">Submit</button>
                 <div class="alert" role="alert"></div>
             </div>
         </div>
     </div>
 
-    <script type="text/javascript">
-        var url = "{{ url }}"
-    </script>
 
     <script src="/static/js/userPage.js"></script>
+
+    <script type="text/javascript">
+        var url = "{{ templateVars['url'] }}"
+        $(document).ready(buildPage( "{{ templateVars['action'] }}", 
+        {% if templateVars['selectedBrewery'] and templateVars['selectedBeer'] %}
+        "{{ templateVars['selectedBrewery'] }}", "{{ templateVars['selectedBeer'] }}"
+        {% endif %}
+        ))
+    </script>
+
 {% endblock %}
