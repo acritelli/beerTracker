@@ -3,15 +3,6 @@ var result
 var addOtherBrewery = true
 var addOtherBeer = true
 
-//TODO: add a build page:
-//  Makes page Headers x
-//   makes ajax request based on action x
-//   builds page x
-// toggles a selected beer, if defined
-// $('#brewerySelector').val('Almanac')
-
-// TODO: remove edit button and migrate functionality to regular form post x
-
 // Builds a page based on desired action (passed in template) with the specified brewery/beer selected
 function buildPage (action, selectedBrewery, selectedBeer) {
     // Decode brewery and beer selectors, in case there were any HTML special chars

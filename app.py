@@ -109,13 +109,22 @@ def getMustTryBeers(url):
 
 @app.route('/users/<url>/editRating', methods = ['POST'])
 def editRating(url):
+    print(request.form)
     # TODO: more efficient query and update, return more robust errors...
 
+    # Account for other brewery/beer
+    if request.form['brewerySelector'] == 'Other':
+        brewery = request.form['otherBreweryName']
+    else:
+        brewery = request.form['brewerySelector']
+    if request.form['beerSelector'] == 'Other':
+        beer = request.form['otherBeerName']
+    else:
+        beer = request.form['beerSelector']
+
     # Remove . and $ characters from brewery and beer, since they're keys in Mongo
-    brewery = request.form['brewerySelector']
     brewery = brewery.replace('.', '')
     brewery = brewery.replace('$', '')
-    beer = request.form['beerSelector']
     beer = beer.replace('.', '')
     beer = beer.replace('$', '')
 
