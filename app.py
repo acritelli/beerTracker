@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, jsonify, make_response, url_for
+from flask import Flask, render_template, request, redirect, jsonify, make_response, url_for, flash
 from shortuuid import uuid
 from flask_pymongo import PyMongo
 from bson.json_util import dumps
@@ -8,8 +8,10 @@ import config
 from copy import deepcopy
         
 
+#TODO: this should be config'd from a file
 app = Flask(__name__)
 app.config['MONGO_DBNAME'] = 'beerexpo'
+app.config['SECRET_KEY'] = config.SECRET_KEY
 
 if(config.MONGO_USERNAME):
     app.config['MONGO_USERNAME'] = config.MONGO_USERNAME
@@ -109,9 +111,7 @@ def getMustTryBeers(url):
 
 @app.route('/users/<url>/editRating', methods = ['POST'])
 def editRating(url):
-    print(request.form)
     # TODO: more efficient query and update, return more robust errors...
-
     # Account for other brewery/beer
     if request.form['brewerySelector'] == 'Other':
         brewery = request.form['otherBreweryName']
@@ -149,6 +149,7 @@ def editRating(url):
     user['beer'][brewery][beer]['mustTry'] = mustTry
 
     mongo.db.users.update({'url' : url}, user)
+    flash('Successfully edited ' + brewery + ' ' + beer)
     return(redirect(url_for('user', uuid=url, selectedBrewery=brewery, selectedBeer=beer)))
 
 @app.route('/users/<uuid>/downloadRatings')

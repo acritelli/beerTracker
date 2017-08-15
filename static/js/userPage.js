@@ -113,7 +113,6 @@ function buildBeerSelector(brewery, selectedBeer) {
 
 function displayBeerRating (brewery, beer) {
     // Account for other beer
-    $('.alert').css('display', 'none')
     if (beer === 'Other') {
         $('#otherBeer').val('')
         $('#otherBeer').css('display', 'block')
