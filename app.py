@@ -5,6 +5,7 @@ from bson.json_util import dumps
 from csv import writer
 from io import StringIO
 import config
+import re
 from copy import deepcopy
         
 
@@ -71,6 +72,11 @@ def mustTryBeers(uuid):
     templateVars['activePage'] = 'mustTryBeers'
     templateVars['url'] =  uuid
     templateVars['action'] = 'displayMustTry'
+
+    if 'selectedBrewery' in request.args and 'selectedBeer' in request.args:
+        templateVars['selectedBrewery'] = request.args['selectedBrewery']
+        templateVars['selectedBeer'] = request.args['selectedBeer']
+
     return render_template('userPage.html', templateVars=templateVars)
 
 # Returns a user object with a list of all beers (including those not yet rated)
@@ -102,7 +108,6 @@ def getMustTryBeers(url):
     for brewery in user['beer']:
         for beer in user['beer'][brewery]:
             if 'mustTry' in user['beer'][brewery][beer] and not user['beer'][brewery][beer]['mustTry']:
-                print(brewery + beer + ' not a must try')
                 del mustTryBeers['beer'][brewery][beer]
         # If brewery dictionary is now empty (all have been deleted), then remove the brewery
         if not mustTryBeers['beer'][brewery]:
@@ -139,6 +144,7 @@ def editRating(url):
     user = mongo.db.users.find_one({'url': url})
 
     # Account for new breweries/beers
+    #TODO: go through and remove () from if statements...
     if (not brewery in user['beer']):
         user['beer'][brewery] = {}
     if (not beer in user['beer'][brewery]):
@@ -150,7 +156,16 @@ def editRating(url):
 
     mongo.db.users.update({'url' : url}, user)
     flash('Successfully edited ' + brewery + ' ' + beer)
-    return(redirect(url_for('user', uuid=url, selectedBrewery=brewery, selectedBeer=beer)))
+
+    # Redirect based on where user came from. Dirty way to do this.
+    # TODO: make this suck less.
+    if re.match('.*mustTryBeers.*', request.referrer):
+        # Account for mustTry changing
+        if not mustTry:
+            return(redirect(url_for('mustTryBeers', uuid=url)))
+        return(redirect(url_for('mustTryBeers', uuid=url, selectedBrewery=brewery, selectedBeer=beer)))
+    else:
+        return(redirect(url_for('user', uuid=url, selectedBrewery=brewery, selectedBeer=beer)))
 
 @app.route('/users/<uuid>/downloadRatings')
 def downloadRatings(uuid):
