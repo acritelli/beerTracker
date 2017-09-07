@@ -47,7 +47,7 @@ Install all of the Python prerequisites: `pip install -r requirements.txt`
 
 ## Install and configure MongoDB
 
-The instructions below are for MongoDB 3.4. You should consult the [https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/](official installation instructions) to ensure that you are installing the latest version according to MongoDB's best practices.
+The instructions below are for MongoDB 3.4. You should consult the [https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/] (official installation instructions) to ensure that you are installing the latest version according to MongoDB's best practices.
 
 Install vim: `yum install -y vim`
 
